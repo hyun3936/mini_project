@@ -18,24 +18,37 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
+	
+	// ResponseEntity는 REST컨트롤러의 반환형, 즉 REST API의 응답을 위해 사용하는 클래스입니다.
+	// API 요청을 받아 응답할 때 이 클래스에서 HTTP 상태 코드, 헤더, 본문을 실어 보낼 수 있습니다.
+	
+	
+	// 게시글 목록 가져오기
 	@GetMapping("/board")
-	public ResponseEntity<?> getBoard(Integer seq){
-		if (seq == null)
-			return ResponseEntity.ok(boardService.getbBoards());
-		return ResponseEntity.ok(boardService.getBoard(seq));
+	public ResponseEntity<?> getBoard(){
+			return ResponseEntity.ok(boardService.getBoards());
 	}
 	
-	@PostMapping("/board")
+	// 게시글 상세보기
+	@GetMapping("/board/{seq}")
+	public ResponseEntity<?> getBoard(@PathVariable Integer seq){
+		return ResponseEntity.ok(boardService.getBoard(seq));
+	}
+
+	// 새로운 게시글 작성
+	@PostMapping("/boardWrite")
 	public ResponseEntity<?> addBoard(@RequestBody Board board) {
 		return ResponseEntity.ok(boardService.add(board));
 	}
 	
-	@PutMapping("/board")
+	// 게시글 수정
+	@PutMapping("/boardUpdate")
 	public ResponseEntity<?> updateBoards(@RequestBody Board board) {
 		return ResponseEntity.ok(boardService.update(board));
 	}
 	
-	@DeleteMapping("/board/{seq}") // 파라미터로 받아서 하는 방법 // board/4 이런식으로 작성
+	// 게시글 삭제 (+ 그 게시판에 달려있던 댓글도 같이 삭제)
+	@DeleteMapping("/boardDel/{seq}") // 파라미터로 받아서 하는 방법 // board/4 이런식으로 작성
 	public ResponseEntity<?> deleteBoard(@PathVariable Integer seq) {
 		return ResponseEntity.ok(boardService.delete(seq));
 	}

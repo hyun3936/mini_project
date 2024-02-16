@@ -26,14 +26,15 @@ public class Comment {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int cmt_id;
-	private String cmt_content;
+//	@Column // 해당 필드를 테이블의 속성으로 매핑
+	private String cmt_content; // 댓글 본문
+//	@Column // 해당 필드를 테이블의 속성으로 매핑
+	private String Cmt_writer; // 댓글 작성자
 	@Builder.Default
 	private Date createDate = new Date(); // 날짜,시간.
 	
-	@ManyToOne
-	@JoinColumn(name = "seq")
-	private Board board;
-	
-	
-	
+	@ManyToOne // Comment 엔티티와 Board 엔티티를 다대일 관계로 설정
+	@JoinColumn(name = "board_seq") // Board 엔티티의 seq를 외래키로 지정할 것이므로 외래키 이름을 "board_seq"로 지음.
+	private Board board; // 해당 댓글의 부모 게시글
+
 }

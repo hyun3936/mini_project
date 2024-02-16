@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.pnu.domain.Comment;
+import edu.pnu.persistence.BoardRepository;
 import edu.pnu.persistence.CmtRepository;
 
 @Service
@@ -13,6 +14,11 @@ public class CmtService {
 
 	@Autowired
 	private CmtRepository cmtRepo;
+	
+	@Autowired
+	private BoardRepository boardRepo; // 댓글을 생성할 때 대상 게시글의 존재 여부 파악하기 위해 
+	
+	
 	
 	// 데이터들 전부 불러옴
 	public List<Comment> getbCmts() {
