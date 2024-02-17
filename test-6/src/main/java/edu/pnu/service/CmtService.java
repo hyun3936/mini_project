@@ -26,7 +26,7 @@ public class CmtService {
 	}
 
 	// 데이터 내가 원하는 것만 id로 검색해서 가져옴
-	public Comment getCmt (Integer cmt_id) {
+	public Comment getCmt (Long cmt_id) {
 		return cmtRepo.findById(cmt_id).get();
 	}
 
@@ -34,6 +34,10 @@ public class CmtService {
 	public Comment add(Comment cmt) {
 		return cmtRepo.save(cmt);
 	}
+	
+//	public Comment add(CommentInsertDTO cmt) {
+//		return cmtRepo.insertComment(cmt);
+//	}
 
 	// 데이터를 수정할껀데 네임만 수정할 수도 있고, 패스만 수정 할 수 있다.
 	// 그런데 하나만 수정했을 때 나머지가 null로 되면 안되고 원래값을 유지하도록
@@ -49,7 +53,7 @@ public class CmtService {
 		return cmtRepo.save(m);
 	}
 
-	public String delete(Integer cmt_id) {
+	public String deleteCmt(Long cmt_id) {
 			try {
 				if (cmtRepo.existsById(cmt_id) ) {
 					cmtRepo.deleteById(cmt_id);

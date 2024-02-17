@@ -19,32 +19,30 @@ public class CmtController {
 	@Autowired
 	private CmtService cmtService;
 	
-	// 1. 댓글 조회
-	@GetMapping("/board/{board_seq}/comments")
-	public ResponseEntity<?> getCmt(Integer cmt_id){
+	// 1. 댓글 조회 : 굳이 필요한가?
+	@GetMapping("/board/comments")
+	public ResponseEntity<?> getCmt(Long cmt_id){
 		if (cmt_id == null)
 			return ResponseEntity.ok(cmtService.getbCmts());
 		return ResponseEntity.ok(cmtService.getCmt(cmt_id));
 	}
 	
-	// 2. 댓글 생성
-	@PostMapping("/board/{board_seq}/comments")
+	// 2. 댓글 작성
+	@PostMapping("/board/comments")
 	public ResponseEntity<?> addCmt(@RequestBody Comment cmt) {
 		return ResponseEntity.ok(cmtService.add(cmt));
 	}
 
 	// 3. 댓글 수정
-	@PutMapping("/board/{board_seq}/comments") 
+	@PutMapping("/board/comments") 
 	public ResponseEntity<?> updateCmts(@RequestBody Comment cmt) {
 		return ResponseEntity.ok(cmtService.update(cmt));
 	}
 	
 	// 4. 댓글 삭제
-	@DeleteMapping("/board/comments/{cmt_id}") // 파라미터로 받아서 하는 방법 // board/4 이런식으로 작성
-	public ResponseEntity<?> deleteCmt(@PathVariable Integer cmt_id) {
-		return ResponseEntity.ok(cmtService.delete(cmt_id));
+	@DeleteMapping("/board/comments/{cmt_id}") // 파라미터로 받아서 하는 방법 // board/comments/4 이런식으로 작성
+	public ResponseEntity<?> deleteCmt(@PathVariable Long cmt_id) {
+		return ResponseEntity.ok(cmtService.deleteCmt(cmt_id));
 	}
-	
-	
 	
 }

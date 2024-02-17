@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import edu.pnu.domain.Board;
 import edu.pnu.persistence.BoardRepository;
+import edu.pnu.persistence.CmtRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class BoardService {
@@ -14,13 +16,18 @@ public class BoardService {
 	@Autowired
 	private BoardRepository boardRepo;
 	
+	@Autowired
+	private CmtRepository cmtRepo;
+	
+	
+	
 	// 게시글 목록 
 	public List<Board> getBoards() {
 		return boardRepo.findAll();
 	}
 
 	// 데이터 내가 원하는 것만 id로 검색해서 가져옴
-	public Board getBoard (Integer seq) {
+	public Board getBoard (Long seq) {
 		return boardRepo.findById(seq).get();
 	}
 
@@ -43,26 +50,30 @@ public class BoardService {
 				m.setTitle(board.getTitle());
 		if (board.getContent() != null)
 				m.setContent(board.getContent());
-		if (board.getWriter() != null)
-				m.setWriter(board.getWriter());
 		boardRepo.save(m);
 		
-		return "게시판 업데이트 완료";
 		} catch (Exception e) { 
 			e.printStackTrace();
+			return "업데이트 실패";
 		}
-		return "업데이트 실패";
+		return "게시판 업데이트 완료";
 	}
 
-	public String delete(Integer seq) {
+	
+	// 게시글 삭제하면 게시글에 달려있던 댓글들도 다 같이 삭제.
+	@Transactional
+	public String delete(Long seq) {
 			try {
-				if (boardRepo.existsById(seq) ) {
+				if (boardRepo.existsById(seq) ) { // 기존 데이터가 있는 경우에만 실행
+					cmtRepo.deleteCmt(seq);
 					boardRepo.deleteById(seq);
-					return "삭제 성공";
+				}else {
+					return "삭제할 데이터가 없습니다.";
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				return "삭제 실패";
 			}
-			return "삭제 실패";
+			return "삭제 성공";
 	}
 }
