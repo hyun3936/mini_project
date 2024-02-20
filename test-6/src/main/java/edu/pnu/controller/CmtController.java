@@ -19,18 +19,22 @@ public class CmtController {
 	@Autowired
 	private CmtService cmtService;
 	
-	// 1. 댓글 조회 : 굳이 필요한가?
-	@GetMapping("/board/comments")
-	public ResponseEntity<?> getCmt(Long cmt_id){
-		if (cmt_id == null)
-			return ResponseEntity.ok(cmtService.getbCmts());
-		return ResponseEntity.ok(cmtService.getCmt(cmt_id));
+	// 1. 게시판에 달린 모든 댓글 호출 
+	
+	@GetMapping("/board/{board_seq}/comments")
+	public ResponseEntity<?> getCmts(@PathVariable Long board_seq){
+			return ResponseEntity.ok(cmtService.getCmts(board_seq));
 	}
 	
 	// 2. 댓글 작성
-	@PostMapping("/board/comments")
-	public ResponseEntity<?> addCmt(@RequestBody Comment cmt) {
-		return ResponseEntity.ok(cmtService.add(cmt));
+	@PostMapping("/board/{board_seq}/comments")
+	public ResponseEntity<?> addCmt(@RequestBody Comment cmt,@PathVariable Long board_seq) {
+		Comment newCmt = cmtService.add(board_seq, cmt);
+		// 게시판이 없는데 댓글이 달릴 수는 없음.
+		// ex) board_seq가 3이면 3게시판에 댓글이 달리는건데
+		if (newCmt != null)
+			return ResponseEntity.ok(newCmt);
+		return ResponseEntity.badRequest().build();
 	}
 
 	// 3. 댓글 수정

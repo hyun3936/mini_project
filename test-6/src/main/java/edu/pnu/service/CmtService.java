@@ -1,10 +1,12 @@
 package edu.pnu.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edu.pnu.domain.Board;
 import edu.pnu.domain.Comment;
 import edu.pnu.persistence.BoardRepository;
 import edu.pnu.persistence.CmtRepository;
@@ -21,8 +23,8 @@ public class CmtService {
 	
 	
 	// 데이터들 전부 불러옴
-	public List<Comment> getbCmts() {
-		return cmtRepo.findAll();
+	public List<Comment> getCmts(Long board_seq) {
+		return cmtRepo.findByBoard_seq(board_seq);
 	}
 
 	// 데이터 내가 원하는 것만 id로 검색해서 가져옴
@@ -30,8 +32,13 @@ public class CmtService {
 		return cmtRepo.findById(cmt_id).get();
 	}
 
+	
 	// 데이터 추가
-	public Comment add(Comment cmt) {
+	public Comment add(Long board_seq, Comment cmt) {
+		Optional<Board> opt = boardRepo.findById(board_seq);
+		if (opt.isPresent() == false)
+			return null;
+		cmt.setBoard(opt.get());
 		return cmtRepo.save(cmt);
 	}
 	

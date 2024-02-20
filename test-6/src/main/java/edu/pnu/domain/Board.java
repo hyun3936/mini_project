@@ -29,9 +29,11 @@ public class Board {
     private String title; // 제목
     private String writer; // 작성자
     private String content; // 내용
-    @Builder.Default
+    @Builder.Default // 객체에 디폴트값
+    @Column(columnDefinition = "TIMESTAMP default current_timestamp") // 디비에 디폴트값 설정, 이 코드 없이 MySQL에서 인서트문으로 데이터 추가하면 null값이 들어감.
     private Date createDate = new Date(); // 날짜
     @Builder.Default
+    @Column(columnDefinition = "BIGINT default 0")
     private Long cnt = 0L; // 조회수
 
 }

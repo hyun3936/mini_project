@@ -1,6 +1,7 @@
 package edu.pnu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.pnu.domain.Board;
@@ -24,16 +26,19 @@ public class BoardController {
 	
 	//<?>는 어떤 유형의 데이터든 응답으로 반환될 수 있음을 의미합니다.
 	
-	// 게시글 목록 가져오기
-	@GetMapping("/board")
-	public ResponseEntity<?> getBoard(){
-			return ResponseEntity.ok(boardService.getBoards());
+	// 게시글 목록 가져오기 /page 기능
+	@GetMapping("/board") // http://localhost:8080/board?pageNo=2 --> 2페이지 주소 이런식으로 작성
+	public ResponseEntity<?> getBoards(@RequestParam(required = false, defaultValue = "1") Integer pageNo){
+			Page<Board> boardPage = boardService.getBoards(pageNo);
+			return ResponseEntity.ok(boardPage);
 	}
 	
 	// 게시글 상세보기
 	@GetMapping("/board/{seq}")
 	public ResponseEntity<?> getBoard(@PathVariable Long seq){
-		return ResponseEntity.ok(boardService.getBoard(seq));
+		Board b1= boardService.getBoard(seq);
+		if (b1 != null) return ResponseEntity.ok(b1);
+		return ResponseEntity.ok("Not Found!!");
 	}
 
 	// 새로운 게시글 작성

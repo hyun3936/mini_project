@@ -3,12 +3,14 @@ package edu.pnu.domain;
 import java.util.Date;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,8 +32,9 @@ public class Comment {
 //	@Column // 해당 필드를 테이블의 속성으로 매핑
 	private String cmt_content; // 댓글 본문
 //	@Column // 해당 필드를 테이블의 속성으로 매핑
-	private String Cmt_writer; // 댓글 작성자
+	private String cmt_writer; // 댓글 작성자
 	@Builder.Default
+	@Column(columnDefinition = "TIMESTAMP default current_timestamp")
 	private Date createDate = new Date(); // 날짜,시간.
 	
 	@ManyToOne(cascade=CascadeType.ALL) // Comment 엔티티와 Board 엔티티를 다대일 관계로 설정

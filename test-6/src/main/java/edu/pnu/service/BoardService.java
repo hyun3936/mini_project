@@ -1,8 +1,11 @@
 package edu.pnu.service;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import edu.pnu.domain.Board;
@@ -22,13 +25,17 @@ public class BoardService {
 	
 	
 	// 게시글 목록 
-	public List<Board> getBoards() {
-		return boardRepo.findAll();
+	public Page<Board> getBoards(Integer pageNo) {
+		Pageable pageable = PageRequest.of(pageNo - 1, 10); 
+		return boardRepo.findAll(pageable);
 	}
 
 	// 데이터 내가 원하는 것만 id로 검색해서 가져옴
 	public Board getBoard (Long seq) {
-		return boardRepo.findById(seq).get();
+		 Optional<Board> opt = boardRepo.findById(seq);
+		 if (opt.isPresent())
+			 return opt.get();
+		 return null;
 	}
 
 	// 데이터 추가
@@ -65,7 +72,7 @@ public class BoardService {
 	public String delete(Long seq) {
 			try {
 				if (boardRepo.existsById(seq) ) { // 기존 데이터가 있는 경우에만 실행
-					cmtRepo.deleteCmt(seq);
+					cmtRepo.deleteCmtToo(seq);
 					boardRepo.deleteById(seq);
 				}else {
 					return "삭제할 데이터가 없습니다.";

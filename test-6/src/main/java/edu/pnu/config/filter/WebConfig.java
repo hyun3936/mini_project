@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 //CORS 리액트와 연결
 
 
-@Configuration
+@Configuration // 이 클래스가 설정 클래스라고 정의 (IoC 컨테이너에 로드)
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
