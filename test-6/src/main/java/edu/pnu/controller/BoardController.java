@@ -26,34 +26,68 @@ public class BoardController {
 	
 	//<?>는 어떤 유형의 데이터든 응답으로 반환될 수 있음을 의미합니다.
 	
-	// 게시글 목록 가져오기 /page 기능
+	// 1. 게시글 목록 가져오기 /page 기능
 	@GetMapping("/board") // http://localhost:8080/board?pageNo=2 --> 2페이지 주소 이런식으로 작성
 	public ResponseEntity<?> getBoards(@RequestParam(required = false, defaultValue = "1") Integer pageNo){
 			Page<Board> boardPage = boardService.getBoards(pageNo);
 			return ResponseEntity.ok(boardPage);
 	}
 	
-	// 게시글 상세보기
+	// 2. 게시글 상세보기
 	@GetMapping("/board/{seq}")
 	public ResponseEntity<?> getBoard(@PathVariable Long seq){
 		Board b1= boardService.getBoard(seq);
 		if (b1 != null) return ResponseEntity.ok(b1);
-		return ResponseEntity.ok("Not Found!!");
+		return ResponseEntity.ok("Not Found!!"); // 게시글이 없을 경우 에러 안뛰우기위해 이런식으로 에러시 에러메시지 전달.
 	}
 
-	// 새로운 게시글 작성
+	// 3. 게시글 키워드로 검색
+	
+	// 3-1. 제목으로 검색
+	// localhost:8080/boardSearch?keyword=제목
+	@GetMapping("/boardSearch/Title")
+	public ResponseEntity<?> getBoardKeywordTitle(String keyword){
+		return ResponseEntity.ok(boardService.getBoardKeywordTitle(keyword));
+	}
+	
+	// 3-2. 내용으로 검색
+	@GetMapping("/boardSearch/Content")
+	public ResponseEntity<?> getBoardKeywordContent(String keyword){
+		return ResponseEntity.ok(boardService.getBoardKeywordContent(keyword));
+	}
+	
+	
+	// 3-3. 작성자 검색
+	@GetMapping("/boardSearch/Writer")
+	public ResponseEntity<?> getBoardKeywordWriter(String keyword){
+		return ResponseEntity.ok(boardService.getBoardKeywordWriter(keyword));
+	}
+	
+	
+	// 3-4. 날짜로 검색
+	@GetMapping("/boardSearch/Date")
+	public ResponseEntity<?> getBoardKeywordDate(String keyword){
+		return ResponseEntity.ok(boardService.getBoardKeywordDate(keyword));
+	}
+			
+	
+	
+	
+	
+	// 4. 새로운 게시글 작성
 	@PostMapping("/board")
 	public ResponseEntity<?> addBoard(@RequestBody Board board) {
+		System.out.println("board :" + board);
 		return ResponseEntity.ok(boardService.add(board));
 	}
 	
-	// 게시글 수정
+	// 5. 게시글 수정
 	@PutMapping("/board")
 	public ResponseEntity<?> updateBoards(@RequestBody Board board) {
 		return ResponseEntity.ok(boardService.update(board));
 	}
 	
-	// 게시글 삭제 (+ 그 게시판에 달려있던 댓글도 같이 삭제)
+	// 6. 게시글 삭제 (+ 그 게시판에 달려있던 댓글도 같이 삭제)
 	@DeleteMapping("/board/{seq}") // 파라미터로 받아서 하는 방법 // board/4 이런식으로 작성
 	public ResponseEntity<?> deleteBoard(@PathVariable Long seq) {
 		return ResponseEntity.ok(boardService.delete(seq));

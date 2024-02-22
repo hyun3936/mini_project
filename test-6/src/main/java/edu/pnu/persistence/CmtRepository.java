@@ -3,6 +3,7 @@ package edu.pnu.persistence;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -38,6 +39,8 @@ public interface CmtRepository extends JpaRepository<Comment, Long >{
 			+ "WHERE board_seq = :board_seq",
 			nativeQuery = true)
 	List <Comment> findByBoard_seq(@Param("board_seq")Long board_seq); 
+	
+	Optional<Comment> findByCmt_id(Long cmt_id);
 	
 	
 	

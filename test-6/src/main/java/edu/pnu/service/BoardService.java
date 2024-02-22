@@ -1,5 +1,7 @@
 package edu.pnu.service;
 
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,46 @@ public class BoardService {
 			 return opt.get();
 		 return null;
 	}
+	
+	// 키워드에 해당하는 게시글 가져오기
+	
+	// 3-1. 제목으로 검색
+	public List<Board> getBoardKeywordTitle(String keyword){
+		// keyword가 비어있을 때 => 전체 게시글 
+		if (keyword == null)
+			return boardRepo.findAll();
+		return boardRepo.searchKeywordTitle(keyword);
+	}
+	
+	// 3-2. 내용으로 검색
+	public List<Board> getBoardKeywordContent(String keyword){
+		// keyword가 비어있을 때 => 전체 게시글 
+		if (keyword == null)
+			return boardRepo.findAll();
+		return boardRepo.searchKeywordContent(keyword);
+	}
+	
+	
+	// 3-3. 작성자 검색
+	public List<Board> getBoardKeywordWriter(String keyword){
+		// keyword가 비어있을 때 => 전체 게시글 
+		if (keyword == null)
+			return boardRepo.findAll();
+		return boardRepo.searchKeywordWriter(keyword);
+	}
+	
+	
+	// 3-4. 날짜로 검색
+	public List<Board> getBoardKeywordDate(String keyword){
+		// keyword가 비어있을 때 => 전체 게시글 
+		if (keyword == null)
+			return boardRepo.findAll();
+		return boardRepo.getBoardKeywordDate(keyword);
+	}
+	
+	
+	
+	
 
 	// 데이터 추가
 	public String add(Board board) {
@@ -57,6 +99,8 @@ public class BoardService {
 				m.setTitle(board.getTitle());
 		if (board.getContent() != null)
 				m.setContent(board.getContent());
+		if (board.getWriter() != null)
+				m.setWriter(board.getWriter());
 		boardRepo.save(m);
 		
 		} catch (Exception e) { 
@@ -72,7 +116,7 @@ public class BoardService {
 	public String delete(Long seq) {
 			try {
 				if (boardRepo.existsById(seq) ) { // 기존 데이터가 있는 경우에만 실행
-					cmtRepo.deleteCmtToo(seq);
+					cmtRepo.deleteCmtToo(seq);	// 댓글 먼저 삭제 후 게시판 삭제.
 					boardRepo.deleteById(seq);
 				}else {
 					return "삭제할 데이터가 없습니다.";

@@ -1,12 +1,15 @@
 package edu.pnu.domain;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,9 +34,14 @@ public class Board {
     private String content; // 내용
     @Builder.Default // 객체에 디폴트값
     @Column(columnDefinition = "TIMESTAMP default current_timestamp") // 디비에 디폴트값 설정, 이 코드 없이 MySQL에서 인서트문으로 데이터 추가하면 null값이 들어감.
-    private Date createDate = new Date(); // 날짜
+//    private Date createDate = new Date(); // 날짜,시간.
+    private LocalDateTime createDate = LocalDateTime.now();
     @Builder.Default
     @Column(columnDefinition = "BIGINT default 0")
     private Long cnt = 0L; // 조회수
+    
+    
+    @OneToMany(cascade=CascadeType.ALL) // 게시글 삭제하면 거기 달려있던 댓글도 같이 삭제
+    private List<Comment> cmts; 
 
 }
