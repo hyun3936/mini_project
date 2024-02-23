@@ -20,7 +20,7 @@ public class CmtController {
 	@Autowired
 	private CmtService cmtService;
 	
-	// 1. 게시판에 달린 모든 댓글 호출 
+	// 1. 게시판에 달린 모든 댓글 호출  
 	
 	@GetMapping("/board/{board_seq}/comments")
 	public ResponseEntity<?> getCmts(@PathVariable Long board_seq){
@@ -37,12 +37,24 @@ public class CmtController {
 			return ResponseEntity.ok(newCmt);
 		return ResponseEntity.badRequest().build();
 	}
+	
+	
+	
+	
 
-	// 3. 댓글 수정
+//	// 3. 댓글 수정 - 오리지날 버전
+//	@PutMapping("/board/comments") 
+//	public ResponseEntity<?> updateCmts(@RequestBody Comment cmt) {
+//		return ResponseEntity.ok(cmtService.update(cmt));
+//	}
+	
+	// 3. 댓글 수정 - 비밀번호 추가 버전
 	@PutMapping("/board/comments") 
 	public ResponseEntity<?> updateCmts(@RequestBody Comment cmt) {
 		return ResponseEntity.ok(cmtService.update(cmt));
 	}
+	
+	
 	
 //	// 4. 댓글 삭제 - 오리지날 버전
 //	@DeleteMapping("/board/comments/{cmt_id}") // 파라미터로 받아서 하는 방법 // board/comments/4 이런식으로 작성
@@ -52,9 +64,12 @@ public class CmtController {
 	
 	// 4. 댓글 삭제 - 비번 확인 버전
 	// localhost:8080/board/comments/1?password={password}
-		@DeleteMapping("/board/comments/{cmt_id}") // 파라미터로 받아서 하는 방법 // board/comments/4 이런식으로 작성
-		public ResponseEntity<?> deleteCmt(@PathVariable Long cmt_id, @RequestParam String password) {
-			return ResponseEntity.ok(cmtService.deleteCmt(cmt_id, password));
+	
+		// get 방식 외엔 requestparam 잘안씀
+	
+		@DeleteMapping("/board/comments") // 파라미터로 받아서 하는 방법 // board/comments/4 이런식으로 작성
+		public ResponseEntity<?> deleteCmt(@RequestBody Comment cmt) {
+			return ResponseEntity.ok(cmtService.deleteCmt(cmt));
 		}
 		
 	

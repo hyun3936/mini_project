@@ -30,12 +30,13 @@ public class CmtService {
 		return cmtRepo.findById(cmt_id).get();
 	}
 
-	// 데이터 추가
+	// 댓글 작성 
 	public Comment add(Long board_seq, Comment cmt) {
-		Optional<Board> opt = boardRepo.findById(board_seq);
-		if (opt.isPresent() == false)
+		Optional<Board> opt = boardRepo.findById(board_seq); // 게시판이 있는지 확인
+		if (opt.isPresent() == false) // 게시판이 없으면 null 띄움
 			return null;
-		cmt.setBoard(opt.get());
+		// 게시판이 있으면 
+		cmt.setBoard(opt.get()); // 댓글에 해당 게시판을 설정
 		return cmtRepo.save(cmt);
 	}
 
@@ -46,16 +47,40 @@ public class CmtService {
 	// 데이터를 수정할껀데 네임만 수정할 수도 있고, 패스만 수정 할 수 있다.
 	// 그런데 하나만 수정했을 때 나머지가 null로 되면 안되고 원래값을 유지하도록
 
-	// 데이터 수정 (ex. id=2, name=홍길동)
-	public Comment update(Comment cmt) {
-		// 겟멈버 해서 일단 불러 온다음에
-		Comment m = getCmt(cmt.getCmt_id()); // (seq값은 있는거 입력해줘야 그다음이 수정됨.)
-		// 내가 수정할 부분만 변경
-		if (cmt.getCmt_content() != null)
-			m.setCmt_content(cmt.getCmt_content());
-
-		return cmtRepo.save(m);
+//	// 데이터 수정 - 오리지날 버전 (ex. id=2, name=홍길동)
+//	public Comment update(Comment cmt) {
+//		// 겟멈버 해서 일단 불러 온다음에
+//		Comment m = getCmt(cmt.getCmt_id()); // (seq값은 있는거 입력해줘야 그다음이 수정됨.)
+//		// 내가 수정할 부분만 변경
+//		if (cmt.getCmt_content() != null)
+//			m.setCmt_content(cmt.getCmt_content());
+//
+//		return cmtRepo.save(m);
+//	}
+	
+	
+	// 데이터 수정 - 비밀 번호 추가 버전 (ex. id=2, name=홍길동)
+	public String update(Comment cmt) {
+	try {
+		Comment check = getCmt(cmt.getCmt_id());
+		
+		if (check.getPassword().equals(cmt.getPassword())) { // 비밀번호가 일치하고, 댓글이 존재하면 .
+			if (cmt.getCmt_content() != null)
+				check.setCmt_content(cmt.getCmt_content());
+			 cmtRepo.save(check);
+			return "업데이트 성공";
+		} else {
+			return "업데이트 실패. ";
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+		return "업데이트 실패 (예외 발생)";
 	}
+}
+	
+	
+	
+	
 
 	// 삭제 오리지날 버전
 //	public String deleteCmt(Long cmt_id) {
@@ -75,22 +100,20 @@ public class CmtService {
 	// 3. 일치하면 댓글 삭제
 	
 	
-//	public String deleteCmt(Long cmt_id, String password) {
-//		try {
-//		//	Comment check = getCmt(cmt.getCmt_id());
-//			if (cmt.getPassword() == password) {
-//				if(cmtRepo.existsById(cmt_id))
-//				cmtRepo.deleteById(cmt_id);
-//				return "삭제 성공";
-//				
-//			} else {
-//				return "비밀번호가 틀렸습니다. ";
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return "삭제 실패";
-//		}
-		
+	public String deleteCmt(Comment cmt) {
+		try {
+			Comment check = getCmt(cmt.getCmt_id());
+			if (check.getPassword().equals(cmt.getPassword()) && cmtRepo.existsById(cmt.getCmt_id())) { // 비밀번호가 일치하고, 댓글이 존재하면 .
+				cmtRepo.deleteById(cmt.getCmt_id()); // 댓글 삭제
+				return "삭제 성공";
+			} else {
+				return "삭제 실패. ";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "삭제 실패 (예외 발생)";
+		}
+	}
 //		Optional<Comment> comment = cmtRepo.findById(cmt_id);
 //	}
 

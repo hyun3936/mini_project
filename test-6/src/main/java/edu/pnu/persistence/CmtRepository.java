@@ -40,7 +40,7 @@ public interface CmtRepository extends JpaRepository<Comment, Long >{
 			nativeQuery = true)
 	List <Comment> findByBoard_seq(@Param("board_seq")Long board_seq); 
 	
-	Optional<Comment> findByCmt_id(Long cmt_id);
+//	Optional<Comment> findByCmt_id(Long cmt_id);
 	
 	
 	

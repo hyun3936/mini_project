@@ -44,4 +44,5 @@ public class Board {
     @OneToMany(cascade=CascadeType.ALL) // 게시글 삭제하면 거기 달려있던 댓글도 같이 삭제
     private List<Comment> cmts; 
 
+    private String bPassword;
 }
