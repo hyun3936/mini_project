@@ -60,7 +60,7 @@ public class CmtService {
 	
 	
 	// 데이터 수정 - 비밀 번호 추가 버전 (ex. id=2, name=홍길동)
-	public String update(Comment cmt) {
+	public String update(Comment cmt) { // 비번확인후, 내용만 변경 가능
 	try {
 		Comment check = getCmt(cmt.getCmt_id());
 		
@@ -78,6 +78,12 @@ public class CmtService {
 	}
 }
 	
+	// 이런 형식 필요
+//	{
+//	    "cmt_id":"5",
+//	    "cmt_content":"슈퍼맨",
+//	    "password":"pa1414ss"
+//	}
 	
 	
 	
@@ -100,6 +106,8 @@ public class CmtService {
 	// 3. 일치하면 댓글 삭제
 	
 	
+	
+	
 	public String deleteCmt(Comment cmt) {
 		try {
 			Comment check = getCmt(cmt.getCmt_id());
@@ -107,7 +115,7 @@ public class CmtService {
 				cmtRepo.deleteById(cmt.getCmt_id()); // 댓글 삭제
 				return "삭제 성공";
 			} else {
-				return "삭제 실패. ";
+				return "삭제 실패";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

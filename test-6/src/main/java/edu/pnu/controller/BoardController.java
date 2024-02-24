@@ -87,12 +87,18 @@ public class BoardController {
 		return ResponseEntity.ok(boardService.update(board));
 	}
 	
-	// 6. 게시글 삭제 (+ 그 게시판에 달려있던 댓글도 같이 삭제)
-	@DeleteMapping("/board/{seq}") // 파라미터로 받아서 하는 방법 // board/4 이런식으로 작성
-	public ResponseEntity<?> deleteBoard(@PathVariable Long seq) {
-		return ResponseEntity.ok(boardService.delete(seq));
-	}
+	// 6. 게시글 삭제 (+ 그 게시판에 달려있던 댓글도 같이 삭제) -- 오리지날 버전
+//	@DeleteMapping("/board/{seq}") // 파라미터로 받아서 하는 방법 // board/4 이런식으로 작성
+//	public ResponseEntity<?> deleteBoard(@PathVariable Long seq) {
+//		return ResponseEntity.ok(boardService.delete(seq));
+//	}
 	
+	
+	// 6. 게시글 삭제 (+ 그 게시판에 달려있던 댓글도 같이 삭제) -- 댓글 추가 버전
+	@DeleteMapping("/board") // 파라미터로 받아서 하는 방법 // board/4 이런식으로 작성
+	public ResponseEntity<?> deleteBoard(@RequestBody Board board) {
+		return ResponseEntity.ok(boardService.delete(board));
+	}
 	
 	
 }

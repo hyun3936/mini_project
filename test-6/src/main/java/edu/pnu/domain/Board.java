@@ -32,6 +32,8 @@ public class Board {
     private String title; // 제목
     private String writer; // 작성자
     private String content; // 내용
+    private String password; // 게시글 비밀번호
+    
     @Builder.Default // 객체에 디폴트값
     @Column(columnDefinition = "TIMESTAMP default current_timestamp") // 디비에 디폴트값 설정, 이 코드 없이 MySQL에서 인서트문으로 데이터 추가하면 null값이 들어감.
 //    private Date createDate = new Date(); // 날짜,시간.
@@ -44,5 +46,5 @@ public class Board {
     @OneToMany(cascade=CascadeType.ALL) // 게시글 삭제하면 거기 달려있던 댓글도 같이 삭제
     private List<Comment> cmts; 
 
-    private String bPassword;
+ 
 }

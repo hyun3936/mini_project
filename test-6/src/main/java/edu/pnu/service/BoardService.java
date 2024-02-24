@@ -1,6 +1,5 @@
 package edu.pnu.service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,19 +25,31 @@ public class BoardService {
 	
 	
 	
-	// 게시글 목록 
+//	// 게시글 목록 -- 오리지날 버전
+//	public Page<Board> getBoards(Integer pageNo) {
+//		Pageable pageable = PageRequest.of(pageNo - 1, 10); 
+//		return boardRepo.findAll(pageable);
+//	}
+	
+	// 게시글 목록 -- 조회수 순
 	public Page<Board> getBoards(Integer pageNo) {
 		Pageable pageable = PageRequest.of(pageNo - 1, 10); 
-		return boardRepo.findAll(pageable);
+		return boardRepo.findAllByOrderBySeqDesc(pageable);
 	}
+	
 
 	// 데이터 내가 원하는 것만 id로 검색해서 가져옴
 	public Board getBoard (Long seq) {
 		 Optional<Board> opt = boardRepo.findById(seq);
-		 if (opt.isPresent())
+		 if (opt.isPresent()) {
+			 // 조회수 추가 기능
+			 Board cntUp = opt.get();
+			 cntUp.setCnt(cntUp.getCnt()+1);
+			 boardRepo.save(cntUp);
 			 return opt.get();
-		 return null;
-	}
+		 }
+		 return null; 
+	} 
 	
 	// 키워드에 해당하는 게시글 가져오기
 	
@@ -89,35 +100,83 @@ public class BoardService {
 	// 데이터를 수정할껀데 네임만 수정할 수도 있고, 패스만 수정 할 수 있다.
 	// 그런데 하나만 수정했을 때 나머지가 null로 되면 안되고 원래값을 유지하도록
 	
-	// 데이터 수정 (ex. id=2, name=홍길동)
+	// 데이터 수정 (ex. id=2, name=홍길동) - 오리지날 버전
+//	public String update(Board board) {
+//		try {
+//		 // 겟멈버 해서 일단 불러 온다음에 
+//		Board m = getBoard(board.getSeq()); //(seq값은 있는거 입력해줘야 그다음이 수정됨.)
+//		 // 내가 수정할 부분만 변경
+//		if (board.getTitle() != null)
+//				m.setTitle(board.getTitle());
+//		if (board.getContent() != null)
+//				m.setContent(board.getContent());
+//		if (board.getWriter() != null)
+//				m.setWriter(board.getWriter());
+//		boardRepo.save(m);
+//		
+//		} catch (Exception e) { 
+//			e.printStackTrace();
+//			return "업데이트 실패";
+//		}
+//		return "게시판 업데이트 완료";
+//	}
+	
+	
+	// 데이터 수정 (ex. id=2, name=홍길동) -- 비밀번호 추가버전
 	public String update(Board board) {
 		try {
 		 // 겟멈버 해서 일단 불러 온다음에 
 		Board m = getBoard(board.getSeq()); //(seq값은 있는거 입력해줘야 그다음이 수정됨.)
 		 // 내가 수정할 부분만 변경
-		if (board.getTitle() != null)
+		if (m.getPassword().equals(board.getPassword())) { // 비밀번호가 일치하고, 댓글이 존재하면 .
+			if (board.getTitle() != null)
 				m.setTitle(board.getTitle());
-		if (board.getContent() != null)
+			if (board.getContent() != null)
 				m.setContent(board.getContent());
-		if (board.getWriter() != null)
+			if (board.getWriter() != null)
 				m.setWriter(board.getWriter());
-		boardRepo.save(m);
+				boardRepo.save(m);
+				return "게시판 업데이트 완료";
+			}
+		return "업데이트 실패";
 		
 		} catch (Exception e) { 
 			e.printStackTrace();
-			return "업데이트 실패";
+			return "업데이트 실패 (예외 발생)";
 		}
-		return "게시판 업데이트 완료";
+	
 	}
+	
+	
 
 	
-	// 게시글 삭제하면 게시글에 달려있던 댓글들도 다 같이 삭제.
+	// 게시글 삭제하면 게시글에 달려있던 댓글들도 다 같이 삭제. -- 오리지날 버전
+//	@Transactional
+//	public String delete(Long seq) {
+//			try {
+//				if (boardRepo.existsById(seq)) { // 기존 데이터가 있는 경우에만 실행
+//					cmtRepo.deleteCmtToo(seq);	// 댓글 먼저 삭제 후 게시판 삭제.
+//					boardRepo.deleteById(seq);
+//				}else {
+//					return "삭제할 데이터가 없습니다.";
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				return "삭제 실패";
+//			}
+//			return "삭제 성공";
+//	}
+	
+	// 게시글 삭제하면 게시글에 달려있던 댓글들도 다 같이 삭제. -- 비밀번호 추가 버전
 	@Transactional
-	public String delete(Long seq) {
+	public String delete(Board board) {
 			try {
-				if (boardRepo.existsById(seq) ) { // 기존 데이터가 있는 경우에만 실행
-					cmtRepo.deleteCmtToo(seq);	// 댓글 먼저 삭제 후 게시판 삭제.
-					boardRepo.deleteById(seq);
+				Board check = getBoard(board.getSeq());
+				if (check.getPassword().equals(board.getPassword()) && boardRepo.existsById(board.getSeq())) { // 비밀번호가 일치하고, 댓글이 존재하면 .
+					if (boardRepo.existsById(board.getSeq())) { // 기존 데이터가 있는 경우에만 실행
+						cmtRepo.deleteCmtToo(board.getSeq());	// 댓글 먼저 삭제 후 게시판 삭제.
+						boardRepo.deleteById(board.getSeq());
+					}
 				}else {
 					return "삭제할 데이터가 없습니다.";
 				}
@@ -127,4 +186,8 @@ public class BoardService {
 			}
 			return "삭제 성공";
 	}
+	
+	
+	
+	
 }
